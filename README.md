@@ -10,6 +10,4 @@ you are the `@`
 
 goal is to get to the `$`
 
-the `+` adds to the team
-
 enemy are `!`

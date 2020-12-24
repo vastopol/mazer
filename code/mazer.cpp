@@ -1,17 +1,25 @@
-#include "util.h"
+#include "Character.h"
+#include "Game.h"
 
 int main() {
   srand(time(NULL));
   Game board = initGrid(Game());
+  char input[1];
+
+  cout << "Player choice:\n1: Elf\n2: Warrior\n3: Wizard" << endl;
+  scanf("%c", input);
+  getchar();
+  cout << endl;
+  board.player = playerChoice(*input);
 
   do {
-    clear();
     displayGrid(board);
-
     pair<int, int> prevPosition = board.position;
-
+    scanf("%c", input);
+    getchar();
+    
     // Move
-    switch (getchar()) {
+    switch (*input) {
     case 'w': // U
       board.position.first--;
       break;
@@ -25,15 +33,25 @@ int main() {
       board.position.second++;
       break;
     default:
-      cout << "Input Error" << endl;
+      cout << "Input Error: '" << input << "'" << endl;
       break;
     }
 
     // Combat
     if (board.grid[board.position.first][board.position.second] == '!') {
-      clear();
       cout << "Combat" << endl;
-      while (true) {
+      int spread = rand() % 2 + 1;  // 1 to 3
+      char choice = spread + 48;  // convert to ascii (FIX)
+      Character* enemy = playerChoice(choice);
+      while (enemy->isAlive() && board.player->isAlive()) {
+        if(rand() % 1) {
+          board.player->attack(*enemy);
+          enemy->attack(*board.player);
+        }
+        else {
+          enemy->attack(*board.player);
+          board.player->attack(*enemy);
+        }
       }
     }
 
@@ -46,8 +64,7 @@ int main() {
     else if (boundsCheck(board)) {
       gameOver(1);
     } 
-    else if (false) {
-      // health check for player
+    else if (!board.player->isAlive()) {
       gameOver(2);
     }
     
